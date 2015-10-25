@@ -17,9 +17,13 @@
 GLint win_width = 800;      // window dimensions
 GLint win_height = 800;
 
+GLUquadricObj *obj;         // Pointer for quadric objects.
+
+// Parameters for gluPerspective()
 GLint angle = 60, nearP = 1, farP = 1000;
 
-GLUquadricObj *obj;         // Pointer for quadric objects.
+// Translation of the whole object
+static GLfloat xTrans = 0.0, yTrans = 0.0, zTrans = 0.0;
 
 // Rotation of the whole object
 static GLfloat rotate_x = 0.0, rotate_y = 0.0, rotate_z = 0.0;
@@ -30,7 +34,7 @@ static int moving = 0, startx, starty;
 // Initialize OpenGL graphics
 void init(void)
 {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // black background
+    glClearColor(0.8f, 0.8f, 0.8f, 1.0f); // black background
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(angle, 1.0, nearP, farP);
@@ -264,11 +268,89 @@ void minionBody()
     
     glPopMatrix();
 }
+
+void drawArms(void)
+{
+    glColor3f(1.0, 1.0, 0.0);
+    obj = gluNewQuadric();
+    //cylinder: @para: base radius/top radius/height/slices/stacks
+    // upper arm
+    glPushMatrix();
+    glRotatef(-25, 0.0, 0.0, 1.0);
+    glRotatef(-90, 1.0, 0.0, 0.0);
+    gluCylinder(obj, 8.0, 8.0, 26, 30, 5);
+    gluSphere(obj, 8.0, 30, 30);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glTranslatef(-8.0, -36.0, 0.0);
+    glRotatef(-13, 0.0, 0.0, 1.0);
+    glRotatef(-90, 1.0, 0.0, 0.0);
+    gluCylinder(obj, 8.0, 8.0, 40, 30, 5);
+    gluSphere(obj, 8.0, 30, 30);
+    glPopMatrix();
+    
+    //fore arm
+    glPushMatrix();
+    glTranslatef(-7.0, -68.0, 0.0);
+    glRotatef(2, 0.0, 0.0, 1.0);
+    glRotatef(-90, 1.0, 0.0, 0.0);
+    gluCylinder(obj, 8.0, 8.0, 32, 30, 5);
+    gluSphere(obj, 8.0, 30, 30);
+    glPopMatrix();
+    
+    glColor3f(0.0, 0.0, 0.0);
+    glPushMatrix();
+    glTranslatef(-6.0, -74.0, 0.0);
+    glRotatef(2, 0.0, 0.0, 1.0);
+    glRotatef(-90, 1.0, 0.0, 0.0);
+    gluCylinder(obj, 9.0, 9.5, 10, 30, 5);
+    gluSphere(obj, 9.0, 30, 30);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glTranslatef(-6.0, -89.0, 0.0);
+    glRotatef(2, 0.0, 0.0, 1.0);
+    glRotatef(-85, 1.0, 0.0, 0.0);
+    gluCylinder(obj, 4.0, 4.0, 7, 30, 5);
+    glTranslatef(0.0, -4.0, 0.0);
+    gluSphere(obj, 5.0, 30, 30);
+    glPopMatrix();
+    
+    //
+    glPushMatrix();
+    glTranslatef(0.0, -84.0, 0.0);
+    glRotatef(35, 0.0, 0.0, 1.0);
+    glRotatef(-90, 1.0, 0.0, 0.0);
+    gluCylinder(obj, 4.0, 4.0, 7, 30, 5);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glTranslatef(0.0, -86.0, 0.0);
+    gluSphere(obj, 5.0, 30, 30);
+    glPopMatrix();
+    
+    //
+    glPushMatrix();
+    glTranslatef(-12.0, -84.0, 0.0);
+    glRotatef(-35, 0.0, 0.0, 1.0);
+    glRotatef(-90, 1.0, 0.0, 0.0);
+    gluCylinder(obj, 4.0, 4.0, 7, 30, 5);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glTranslatef(-12.0, -86.0, 0.0);
+    gluSphere(obj, 5.0, 30, 30);
+    glPopMatrix();
+}
+
 void display(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    
+    glTranslatef(xTrans, yTrans, zTrans);
     
     glRotatef(rotate_x, 1.0, 0.0, 0.0 );
     glRotatef(rotate_y, 0.0, 1.0, 0.0);
@@ -282,7 +364,9 @@ void display(void)
     
     glColor3f(0.9,0.5,0.0);
     //glScaled(5,5,5);
-    minionBody();
+    //minionBody();
+    
+    drawArms();
     
     glutSwapBuffers();
 }
@@ -299,7 +383,7 @@ void reshape(int w, int h)
         gluPerspective(angle, 1.0, nearP, farP);
     gluLookAt(0.0, 0.0, 350.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
     glMatrixMode(GL_MODELVIEW);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
 }
 
 // keyboard callback function
@@ -307,18 +391,19 @@ void keyboard(unsigned char key, int x, int y)
 {
     switch (key)
     {
-        case 'w':
+        case 'a':
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            display();
             break;
-        case 'f':
+        case 's':
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            display();
             break;
         case 113:
             exit(0);
             break;
+        default:
+            break;
     }
+    glutPostRedisplay();
 }
 
 // arrow keys that are used to control the rotation of the object
