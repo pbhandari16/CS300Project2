@@ -13,10 +13,13 @@
 #include <GLUT/glut.h>
 #include <stdlib.h>
 
-static double rotate_x = -58.0;
-static double rotate_y = 0;
+static double rotate_x = 0.0;
+static double rotate_y = 0.0;
+static double rotate_z = 0.0;
 
 float zoomFactor = 60;
+
+GLUquadricObj *obj;
 
 // Initialize OpenGL graphics
 void init(void)
@@ -27,11 +30,9 @@ void init(void)
     glLoadIdentity();
     glOrtho(-40.0, 40.0, -40.0, 40.0, -40.0, 40.0);
     glEnable(GL_DEPTH_TEST);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_BLEND);
-    glEnable(GL_LIGHTING);
+    
+    glEnable(GL_LIGHTING); //Enables openGl lighting
     glEnable(GL_LIGHT0);
-    glClearColor(0.0,0.0,0.0,0.0);
     GLfloat black[] = { 0.0, 0.0, 0.0, 1.0 };
     GLfloat cyan[] = { 0.0, 1.0, 1.0, 1.0 };
     GLfloat white[] = { 1.0, 1.0, 1.0, 1.0 };
@@ -47,18 +48,153 @@ void init(void)
     glEnable(GL_COLOR_MATERIAL);
     glClearStencil(0);
     glEnable(GL_STENCIL_TEST);
+    
     glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
     
     glMatrixMode(GL_MODELVIEW);
 }
 
+void minionBody()
+{
+    obj = gluNewQuadric(); //creates a new quadric object
+    
+    glPushMatrix();
+    glRotatef(90.0,1.0,0.0,0.0);
+   	gluCylinder(obj,8.0,8.0,12,50,50); //middle body
+    glPopMatrix();
+    
+    glPushMatrix();
+    glutSolidSphere(8.0,20,20); //head sphere
+    glPopMatrix();
+    
+    glPushMatrix();
+    glTranslatef(0.0,-12,0.0);
+    glutSolidSphere(8.0,20,20); //bottom sphere
+    glPopMatrix();
+    
+    //right goggles
+    glPushMatrix();
+    glColor3f(0.90,0.91,0.98);
+    glTranslatef(3.0,0.0,6.0);
+    for (float i = 2.0; i < 3; i = i + 0.05)
+        gluCylinder(obj,i,i,2.5,50,50);
+    glPopMatrix();
+    
+    //left goggles
+    glPushMatrix();
+    glColor3f(0.90,0.91,0.98);
+    glTranslatef(-3.0,0.0,6.0);
+    for (float i = 2.0; i < 3; i = i + 0.05)
+        gluCylinder(obj,i,i,2.5,50,50);
+    glPopMatrix();
+    
+    //right eye
+    glPushMatrix();
+    glColor3f(1.0,1.0,1.0);
+    glTranslatef(2.6,0.0,6.0);
+    glutSolidSphere(2.5,20,20); //white eyeball
+    glPopMatrix();
+    
+    glPushMatrix();
+    glColor3f(0.35,0.16,0.14);
+    glTranslatef(2.8,0.0,8.0);
+    glutSolidSphere(0.9,20,20); //brown part
+    glPopMatrix();
+    
+    glPushMatrix();
+    glColor3f(0.0,0.0,0.0);
+    glTranslatef(2.8,0.0,8.4);
+    glutSolidSphere(0.6,20,20); //tiny black part
+    glPopMatrix();
+    
+    //left eyeball
+    glPushMatrix();
+    glColor3f(1.0,1.0,1.0);
+    glTranslatef(-2.6,0.0,6.0);
+    glutSolidSphere(2.5,20,20); //white eyeball
+    glPopMatrix();
+    
+    glPushMatrix();
+    glColor3f(0.35,0.16,0.14);
+    glTranslatef(-2.8,0.0,8.0);
+    glutSolidSphere(0.9,20,20); //brown part
+    glPopMatrix();
+    
+    glPushMatrix();
+    glColor3f(0.0,0.0,0.0);
+    glTranslatef(-2.8,0.0,8.4);
+    glutSolidSphere(0.6,20,20); //tiny black part
+    glPopMatrix();
+    
+    //smile
+    glPushMatrix();
+    //for (float i = 0.0; i < 10; i = i + 0.1)
+    glPointSize(2.0);
+    glColor3f(1.0,0.0,0.0);
+    glBegin(GL_POINTS);
+    glVertex3f(3.0,-5.0,7.5);
+    glVertex3f(2.8,-5.1,7.5);
+    
+    glVertex3f(2.6,-5.2,7.6);
+    
+    glVertex3f(2.4,-5.3,7.7);
+    glVertex3f(2.2,-5.4,7.7);
+    
+    glVertex3f(2.0,-5.5,7.8);
+    glVertex3f(1.8,-5.5,7.8);
+    
+    glVertex3f(1.6,-5.5,7.9);
+    glVertex3f(1.4,-5.5,7.9);
+    
+    glVertex3f(1.2,-5.5,8.0);
+    glVertex3f(1.0,-5.5,8.0);
+    glVertex3f(0.8,-5.5,8.0);
+    glVertex3f(0.6,-5.5,8.0);
+    glVertex3f(0.4,-5.5,8.0);
+    glVertex3f(0.2,-5.5,8.0);
+    glVertex3f(0.0,-5.5,8.0);
+    glVertex3f(-0.2,-5.5,8.0);
+    glVertex3f(-0.4,-5.5,8.0);
+    glVertex3f(-0.6,-5.5,8.0);
+    glVertex3f(-0.8,-5.5,8.0);
+    glVertex3f(-1.0,-5.5,8.0);
+    glVertex3f(-1.2,-5.5,8.0);
+    
+    glVertex3f(-1.4,-5.5,7.9);
+    glVertex3f(-1.6,-5.5,7.9);
+    
+    glVertex3f(-1.8,-5.5,7.8);
+    glVertex3f(-2.0,-5.5,7.8);
+    
+    glVertex3f(-2.2,-5.4,7.7);
+    glVertex3f(-2.4,-5.3,7.7);
+    
+    glVertex3f(-2.6,-5.2,7.6);
+    
+    glVertex3f(-2.8,-5.1,7.5);
+    glVertex3f(-3.0,-5.0,7.5);
+    glEnd();
+    glPopMatrix();
+    
+    //clothing
+    glPushMatrix();
+    glBegin(GL_POLYGON);
+    glVertex3f(-1.2,-6.5,8.0);
+    
+    glEnd();
+    glPopMatrix();
+}
+
 void mydisplay(void)
 {
-    glClearColor( 0, 0, 0, 1 );
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-    
-    glMatrixMode(GL_PROJECTION);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    
+    glRotatef(rotate_x, 1.0, 0.0, 0.0 );
+    glRotatef(rotate_y, 0.0, 1.0, 0.0);
+    glRotatef(rotate_z, 0.0, 0.0, 1.0);
+    
     int w = glutGet(GLUT_WINDOW_WIDTH);
     int h = glutGet(GLUT_WINDOW_HEIGHT);
     gluPerspective(zoomFactor, w / h, 0.1, 100);
@@ -69,7 +205,9 @@ void mydisplay(void)
     glRotatef(rotate_x, 0.0, 0.0, 1.0 );
     glRotatef(rotate_y, 1.0, 0.0, 0.0);
     
-    glFlush();
+    glColor3f(0.9,0.5,0.0);
+    minionBody();
+    
     glutSwapBuffers();
 }
 
