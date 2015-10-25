@@ -335,6 +335,47 @@ static void mouse(int button, int state, int x, int y)
     }
 }
 
+void menuSelect(int value)
+{
+    
+    switch (value)
+    {
+        case 1: moving = GL_TRUE; //start the animation
+            //glutIdleFunc(Animate);
+            break;
+            
+        case 2: moving = GL_FALSE; //stop the animation
+            glutIdleFunc(NULL);
+            break;
+            
+        case 3:
+            exit(0); //quit application
+            break;
+    }
+}
+
+void Animate(void)
+{
+    // Add here
+    
+    glutPostRedisplay();
+}
+
+void Visible(int state)
+{
+    
+    if (state == GLUT_VISIBLE)
+    {
+        if (moving) glutIdleFunc(Animate); //if visible and moving then animate it
+    }
+    
+    else
+    {
+        if (moving) glutIdleFunc(NULL); //if invisible and moving then stop animation
+
+    }
+}
+
 // motion function
 static void motion(int x, int y)
 {
@@ -360,6 +401,14 @@ int main(int argc, char **argv)
     glutMouseFunc(mouse);
     glutMotionFunc(motion);
     glutKeyboardFunc(keyboard);
+    
+    glutIdleFunc(Animate);
+    glutVisibilityFunc(Visible);
+    glutCreateMenu(menuSelect);
+    glutAddMenuEntry("Marathon Man", 1); //start animation
+    glutAddMenuEntry("Take a breather", 2); //stop animation
+    glutAddMenuEntry("Quit", 3); //quit
+    glutAttachMenu(GLUT_RIGHT_BUTTON);
     
     init();
     
