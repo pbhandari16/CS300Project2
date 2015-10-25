@@ -30,7 +30,7 @@ static int moving = 0, startx, starty;
 // Initialize OpenGL graphics
 void init(void)
 {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // black background
+    glClearColor(0.6f, 0.6f, 0.6f, 1.0f); // black background
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(angle, 1.0, nearP, farP);
@@ -40,11 +40,11 @@ void init(void)
     GLfloat black[] = { 0.0, 0.0, 0.0, 1.0 };
     GLfloat cyan[] = { 0.0, 1.0, 1.0, 1.0 };
     GLfloat white[] = { 1.0, 1.0, 1.0, 1.0 };
-    GLfloat direction[] = {600.0, 600.0, 600.0, 0.0};
+    GLfloat direction[] = {1.0, 1.0, 1.0, 0.0};
     
     glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, cyan);
     glMaterialfv(GL_FRONT, GL_SPECULAR, white);
-    glMaterialf(GL_FRONT, GL_SHININESS, 50);
+    glMaterialf(GL_FRONT, GL_SHININESS, 100);
     
     glLightfv(GL_LIGHT0, GL_AMBIENT, black);
     glLightfv(GL_LIGHT0, GL_SPECULAR, white);
@@ -54,6 +54,138 @@ void init(void)
     glEnable(GL_DEPTH_TEST);            // turn on the depth buffer
 }
 
+
+void drawCuboid(float x, float y, float z)
+{
+    glPushMatrix();
+    glBegin(GL_QUADS);
+    glColor3f(1.0, 1.0, 1.0);
+    glVertex3f(-0.5*x, 0.5*y, 0.5*z);
+    glVertex3f(-0.5*x, -0.5*y, 0.5*z);
+    glVertex3f(0.5*x, -0.5*y, 0.5*z);
+    glVertex3f(0.5*x, 0.5*y, 0.5*z);
+    
+    glVertex3f(-0.5*x, 0.5*y, -0.5*z);
+    glVertex3f(-0.5*x, -0.5*y, -0.5*z);
+    glVertex3f(0.5*x, -0.5*y, -0.5*z);
+    glVertex3f(0.5*x, 0.5*y, -0.5*z);
+    
+    glVertex3f(0.5*x, -0.5*y, 0.5*z);
+    glVertex3f(0.5*x, -0.5*y, -0.5*z);
+    glVertex3f(0.5*x, 0.5*y, -0.5*z);
+    glVertex3f(0.5*x, 0.5*y, 0.5*z);
+    
+    glVertex3f(-0.5*x, -0.5*y, 0.5*z);
+    glVertex3f(-0.5*x, -0.5*y, -0.5*z);
+    glVertex3f(-0.5*x, 0.5*y, -0.5*z);
+    glVertex3f(-0.5*x, 0.5*y, 0.5*z);
+    
+    glVertex3f(-0.5*x, 0.5*y, 0.5*z);
+    glVertex3f(-0.5*x, 0.5*y, -0.5*z);
+    glVertex3f(0.5*x, 0.5*y, -0.5*z);
+    glVertex3f(0.5*x, 0.5*y, 0.5*z);
+    
+    glVertex3f(-0.5*x, -0.5*y, 0.5*z);
+    glVertex3f(-0.5*x, -0.5*y, -0.5*z);
+    glVertex3f(0.5*x, -0.5*y, -0.5*z);
+    glVertex3f(0.5*x, -0.5*y, 0.5*z);
+    glEnd();
+    glPopMatrix();
+}
+
+void drawShoeTip()
+{
+    //glPushMatrix();
+    int density = 250;
+    glColor3f(0.0,0.0,0.0);
+    glBegin(GL_POINTS);
+    for (int i = -density; i < density; i++)
+    {
+        double buf = i * (1.5/density);
+        double z = -buf*buf + 2.25;
+        for (int j = 0; j< density; j++)
+        {
+            double x = j * (buf/density);
+            double y = sqrt(buf*buf - x*x);
+            glVertex3f(x, y, z);
+        }
+    }
+    glEnd();
+    //glPopMatrix();
+}
+
+void drawShoeBody(float l, float w)
+{
+    //glPushMatrix();
+    glTranslatef(0, 0, -0.5*l);
+    int density = 250;
+    glColor3f(0.0,0.0,0.0);
+    glBegin(GL_POINTS);
+    for (int i = -density; i < density; i++)
+    {
+        for (int j = -density; j< density; j++)
+        {
+            double x = i * (w/density);
+            double z = j * (0.5*l/density);
+            double y = sqrt(2.25 - x*x);
+            glVertex3f(x, y, z);
+        }
+    }
+    glEnd();
+    //glPopMatrix();
+}
+void minionFeet()
+{
+    //Right leg
+    glPushMatrix();
+    glTranslatef(3.0, -16.0, 0.0);
+    glRotatef(90, 1.0, 0.0, 0.0);
+    gluCylinder(obj, 3, 2, 6, 30, 30);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glColor3f(0.9, 0.5, 0.0);
+    glTranslatef(3, -20, 0.0);
+    glRotatef(90, 1.0, 0.0, 0.0);
+    gluCylinder(obj, 1.5, 1.4, 3.2, 30, 30);
+    glPopMatrix();
+    
+    //Left leg
+    glPushMatrix();
+    glTranslatef(-3.0, -16.0, 0.0);
+    glColor3f(0.0,0.0,0.61);
+
+    glRotatef(90, 1.0, 0.0, 0.0);
+    gluCylinder(obj, 3, 2, 6, 30, 30);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glColor3f(0.9, 0.5, 0.0);
+    glTranslatef(-3, -20, 0.0);
+    glRotatef(90, 1.0, 0.0, 0.0);
+    gluCylinder(obj, 1.5, 1.4, 3.2, 30, 30);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glColor3f(1.0, 1.0, 1.0);
+    glTranslatef(-3, -23.3, 0.0);
+    //drawCuboid(3, 2, 3);
+    glTranslatef(0, -1, 1.5);
+    drawShoeTip();
+    drawShoeBody(3, 2);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glColor3f(1.0, 1.0, 1.0);
+    glTranslatef(3, -23.3, 0.0);
+    //drawCuboid(3, 2, 3);
+    glTranslatef(0, -1, 1.5);
+    drawShoeTip();
+    drawShoeBody(3, 2);
+    glPopMatrix();
+    
+    
+}
 void minionBody()
 {
     obj = gluNewQuadric(); //creates a new quadric object
@@ -75,11 +207,18 @@ void minionBody()
     glutSolidSphere(8.0,20,20); //bottom sphere
     glPopMatrix();
     
+    //googles strap
+    glPushMatrix();
+    glColor3f(0.36,0.25,0.20);
+    glRotatef(90,1.0,0.0,0.0);
+    glutSolidTorus (1.0,7.1,30,120);
+    glPopMatrix();
+    
     //right goggles
     glPushMatrix();
     glColor3f(0.90,0.91,0.98);
     glTranslatef(3.0,0.0,6.0);
-    for (float i = 2.0; i < 3; i = i + 0.05)
+    for (float i = 2.0; i < 3; i = i + 0.001)
         gluCylinder(obj,i,i,2.5,50,50);
     glPopMatrix();
     
@@ -87,7 +226,7 @@ void minionBody()
     glPushMatrix();
     glColor3f(0.90,0.91,0.98);
     glTranslatef(-3.0,0.0,6.0);
-    for (float i = 2.0; i < 3; i = i + 0.05)
+    for (float i = 2.0; i < 3; i = i + 0.001)
         gluCylinder(obj,i,i,2.5,50,50);
     glPopMatrix();
     
@@ -129,56 +268,25 @@ void minionBody()
     glutSolidSphere(0.6,20,20); //tiny black part
     glPopMatrix();
     
+    /************************************************
+     ADD SMILE HERE! :D :D :D
+     ************************************************/
     //smile
     glPushMatrix();
-    //for (float i = 0.0; i < 10; i = i + 0.1)
+    glTranslatef(0.0, -5.5, 0.0);
     glPointSize(2.0);
     glColor3f(1.0,0.0,0.0);
     glBegin(GL_POINTS);
-    glVertex3f(3.0,-5.0,7.5);
-    glVertex3f(2.8,-5.1,7.5);
-    
-    glVertex3f(2.6,-5.2,7.6);
-    
-    glVertex3f(2.4,-5.3,7.7);
-    glVertex3f(2.2,-5.4,7.7);
-    
-    glVertex3f(2.0,-5.5,7.8);
-    glVertex3f(1.8,-5.5,7.8);
-    
-    glVertex3f(1.6,-5.5,7.9);
-    glVertex3f(1.4,-5.5,7.9);
-    
-    glVertex3f(1.2,-5.5,8.0);
-    glVertex3f(1.0,-5.5,8.0);
-    glVertex3f(0.8,-5.5,8.0);
-    glVertex3f(0.6,-5.5,8.0);
-    glVertex3f(0.4,-5.5,8.0);
-    glVertex3f(0.2,-5.5,8.0);
-    glVertex3f(0.0,-5.5,8.0);
-    glVertex3f(-0.2,-5.5,8.0);
-    glVertex3f(-0.4,-5.5,8.0);
-    glVertex3f(-0.6,-5.5,8.0);
-    glVertex3f(-0.8,-5.5,8.0);
-    glVertex3f(-1.0,-5.5,8.0);
-    glVertex3f(-1.2,-5.5,8.0);
-    
-    glVertex3f(-1.4,-5.5,7.9);
-    glVertex3f(-1.6,-5.5,7.9);
-    
-    glVertex3f(-1.8,-5.5,7.8);
-    glVertex3f(-2.0,-5.5,7.8);
-    
-    glVertex3f(-2.2,-5.4,7.7);
-    glVertex3f(-2.4,-5.3,7.7);
-    
-    glVertex3f(-2.6,-5.2,7.6);
-    
-    glVertex3f(-2.8,-5.1,7.5);
-    glVertex3f(-3.0,-5.0,7.5);
+    for (int i = 0; i < 1000; i++)
+    {
+        double x = i*0.003;
+        double y = 0.1*x*x;
+        double z = sqrt(64 - x*x);
+        glVertex3f(x, y, z);
+        glVertex3f(-x, y, z);
+    }
     glEnd();
     glPopMatrix();
-    
     //clothing
     glPushMatrix();
     glColor3f(0.0,0.0,1.0);
@@ -240,7 +348,6 @@ void minionBody()
     glVertex3f(-3.0,-7.5,7.5);
     glEnd();
     
-    
     //right side clothing
     glBegin(GL_POLYGON);
     glVertex3f(1.6,-7.5,7.9);
@@ -276,13 +383,14 @@ void minionBody()
     glVertex3f(3.0,-12.1,7.5);
     glVertex3f(3.0,-7.5,7.5);
     glEnd();
+    glPopMatrix();
     
     //shoulder straps
     glPushMatrix();
     glColor3f(0.0,0.0,0.61);
-    glutSolidTorus (1.0, 8.1,  20,  20);
-    glPopMatrix();
-    
+    glTranslatef(0.0,-7.5,0.0);
+    glRotatef(90,1.0,0.0,0.0);
+    glutSolidTorus (1.0,7.3,30,120);
     glPopMatrix();
 }
 
@@ -292,20 +400,17 @@ void display(void)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    glClearColor(0.6, 0.6, 0.6, 0.6);
     
+//    glMatrixMode( GL_MODELVIEW );
+//    glLoadIdentity();
     glRotatef(rotate_x, 1.0, 0.0, 0.0 );
     glRotatef(rotate_y, 0.0, 1.0, 0.0);
     glRotatef(rotate_z, 0.0, 0.0, 1.0);
     
-    glMatrixMode( GL_MODELVIEW );
-    glLoadIdentity();
-    
-    glRotatef(rotate_x, 0.0, 0.0, 1.0 );
-    glRotatef(rotate_y, 1.0, 0.0, 0.0);
-    
     //glColor3f(0.9,0.5,0.0);
     minionBody();
-    
+    minionFeet();
     glutSwapBuffers();
 }
 
@@ -337,10 +442,17 @@ void keyboard(unsigned char key, int x, int y)
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             display();
             break;
+        case 'z':
+            rotate_z += 5;
+            break;
+        case 'x':
+            rotate_z += -5;
+            break;
         case 113:
             exit(0);
             break;
     }
+    glutPostRedisplay();
 }
 
 // arrow keys that are used to control the rotation of the object
@@ -373,7 +485,46 @@ static void mouse(int button, int state, int x, int y)
         }
     }
 }
+void menuSelect(int value)
+{
+    
+    switch (value)
+    {
+        case 1: moving = GL_TRUE; //start the animation
+            //glutIdleFunc(Animate);
+            break;
+            
+        case 2: moving = GL_FALSE; //stop the animation
+            glutIdleFunc(NULL);
+            break;
+            
+        case 3:
+            exit(0); //quit application
+            break;
+    }
+}
 
+void Animate(void)
+{
+    // Add here
+    
+    glutPostRedisplay();
+}
+
+void Visible(int state)
+{
+    
+    if (state == GLUT_VISIBLE)
+    {
+        if (moving) glutIdleFunc(Animate); //if visible and moving then animate it
+    }
+    
+    else
+    {
+        if (moving) glutIdleFunc(NULL); //if invisible and moving then stop animation
+        
+    }
+}
 // motion function
 static void motion(int x, int y)
 {
@@ -399,7 +550,14 @@ int main(int argc, char **argv)
     glutMouseFunc(mouse);
     glutMotionFunc(motion);
     glutKeyboardFunc(keyboard);
-    
+    glutSpecialFunc(specialKeys);
+    glutIdleFunc(Animate);
+    glutVisibilityFunc(Visible);
+    glutCreateMenu(menuSelect);
+    glutAddMenuEntry("Marathon Man", 1); //start animation
+    glutAddMenuEntry("Take a breather", 2); //stop animation
+    glutAddMenuEntry("Quit", 3); //quit
+    glutAttachMenu(GLUT_RIGHT_BUTTON);
     init();
     
     glutMainLoop();
