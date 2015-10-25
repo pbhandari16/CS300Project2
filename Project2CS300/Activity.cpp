@@ -7,11 +7,11 @@
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <math.h>
+#include <cmath>
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <GLUT/glut.h>
-#include <stdlib.h>
+#include <cstdlib>
 
 /***** Global variables *****/
 GLint win_width = 800;      // window dimensions
