@@ -40,7 +40,7 @@ void init(void)
     GLfloat black[] = { 0.0, 0.0, 0.0, 1.0 };
     GLfloat cyan[] = { 0.0, 1.0, 1.0, 1.0 };
     GLfloat white[] = { 1.0, 1.0, 1.0, 1.0 };
-    GLfloat direction[] = { 1.0, 1.0, 1.0, 0.0 };
+    GLfloat direction[] = {600.0, 600.0, 600.0, 0.0};
     
     glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, cyan);
     glMaterialfv(GL_FRONT, GL_SPECULAR, white);
@@ -57,17 +57,20 @@ void init(void)
 void minionBody()
 {
     obj = gluNewQuadric(); //creates a new quadric object
-    
+    glScaled(5,5,5);
     glPushMatrix();
+    glColor3f(0.9,0.5,0.0);
     glRotatef(90.0,1.0,0.0,0.0);
    	gluCylinder(obj,8.0,8.0,12,50,50); //middle body
     glPopMatrix();
     
     glPushMatrix();
+    glColor3f(0.9,0.5,0.0);
     glutSolidSphere(8.0,20,20); //head sphere
     glPopMatrix();
     
     glPushMatrix();
+    glColor3f(0.0,0.0,0.61);
     glTranslatef(0.0,-12,0.0);
     glutSolidSphere(8.0,20,20); //bottom sphere
     glPopMatrix();
@@ -178,7 +181,7 @@ void minionBody()
     
     //clothing
     glPushMatrix();
-    glColor3f(1.0,0.0,0.0);
+    glColor3f(0.0,0.0,1.0);
     
     //middle part clothing
     glBegin(GL_POLYGON);
@@ -188,79 +191,97 @@ void minionBody()
     glVertex3f(1.2,-7.5,8.0);
     glEnd();
     
+    //grey patch
+    glColor3f(1.0,1.0,1.0);
+    glBegin(GL_POLYGON);
+    glVertex3f(1.2,-8.5,8.1);
+    glVertex3f(-1.2,-8.5,8.1);
+    glVertex3f(-1.2,-10.5,8.1);
+    glVertex3f(1.2,-10.5,8.1);
+    glEnd();
+    
+    //triangle
+    glColor3f(0.0,0.0,1.0);
+    
+    glColor3f(0.0,0.0,1.0);
     //left side clothing
     glBegin(GL_POLYGON);
     glVertex3f(-1.6,-7.5,7.9);
-    glVertex3f(-1.6,-12.0,7.9);
-    glVertex3f(-1.2,-12.0,7.9);
+    glVertex3f(-1.6,-12.1,7.9);
+    glVertex3f(-1.2,-12.1,7.9);
     glVertex3f(-1.2,-7.5,7.9);
     glEnd();
     
     glBegin(GL_POLYGON);
     glVertex3f(-2.0,-7.5,7.8);
-    glVertex3f(-2.0,-12.0,7.8);
-    glVertex3f(-1.6,-12.0,7.9);
+    glVertex3f(-2.0,-12.1,7.8);
+    glVertex3f(-1.6,-12.1,7.9);
     glVertex3f(-1.6,-7.5,7.9);
     glEnd();
     
     glBegin(GL_POLYGON);
     glVertex3f(-2.4,-7.5,7.7);
-    glVertex3f(-2.4,-12.0,7.7);
-    glVertex3f(-2.0,-12.0,7.8);
+    glVertex3f(-2.4,-12.1,7.7);
+    glVertex3f(-2.0,-12.1,7.8);
     glVertex3f(-2.0,-7.5,7.8);
     glEnd();
     
     glBegin(GL_POLYGON);
     glVertex3f(-3.0,-7.5,7.6);
-    glVertex3f(-3.0,-12.0,7.6);
-    glVertex3f(-2.4,-12.0,7.7);
+    glVertex3f(-3.0,-12.1,7.6);
+    glVertex3f(-2.4,-12.1,7.7);
     glVertex3f(-2.4,-7.5,7.7);
     glEnd();
     
     glBegin(GL_POLYGON);
-    glVertex3f(-4.0,-7.5,7.3);
-    glVertex3f(-4.0,-12.0,7.3);
-    glVertex3f(-3.0,-12.0,7.6);
-    glVertex3f(-3.0,-7.5,7.6);
+    glVertex3f(-4.0,-7.5,7.2);
+    glVertex3f(-4.0,-12.1,7.2);
+    glVertex3f(-3.0,-12.1,7.5);
+    glVertex3f(-3.0,-7.5,7.5);
     glEnd();
     
     
     //right side clothing
     glBegin(GL_POLYGON);
     glVertex3f(1.6,-7.5,7.9);
-    glVertex3f(1.6,-12.0,7.9);
-    glVertex3f(1.2,-12.0,7.9);
+    glVertex3f(1.6,-12.1,7.9);
+    glVertex3f(1.2,-12.1,7.9);
     glVertex3f(1.2,-7.5,7.9);
     glEnd();
     
     glBegin(GL_POLYGON);
     glVertex3f(2.0,-7.5,7.8);
-    glVertex3f(2.0,-12.0,7.8);
-    glVertex3f(1.6,-12.0,7.9);
+    glVertex3f(2.0,-12.1,7.8);
+    glVertex3f(1.6,-12.1,7.9);
     glVertex3f(1.6,-7.5,7.9);
     glEnd();
     
     glBegin(GL_POLYGON);
     glVertex3f(2.4,-7.5,7.7);
-    glVertex3f(2.4,-12.0,7.7);
-    glVertex3f(2.0,-12.0,7.8);
+    glVertex3f(2.4,-12.1,7.7);
+    glVertex3f(2.0,-12.1,7.8);
     glVertex3f(2.0,-7.5,7.8);
     glEnd();
     
     glBegin(GL_POLYGON);
     glVertex3f(3.0,-7.5,7.6);
-    glVertex3f(3.0,-12.0,7.6);
-    glVertex3f(2.4,-12.0,7.7);
+    glVertex3f(3.0,-12.1,7.6);
+    glVertex3f(2.4,-12.1,7.7);
     glVertex3f(2.4,-7.5,7.7);
     glEnd();
     
     glBegin(GL_POLYGON);
-    glVertex3f(4.0,-7.5,7.3);
-    glVertex3f(4.0,-12.0,7.3);
-    glVertex3f(3.0,-12.0,7.6);
-    glVertex3f(3.0,-7.5,7.6);
+    glVertex3f(4.0,-7.5,7.2);
+    glVertex3f(4.0,-12.1,7.2);
+    glVertex3f(3.0,-12.1,7.5);
+    glVertex3f(3.0,-7.5,7.5);
     glEnd();
     
+    //shoulder straps
+    glPushMatrix();
+    glColor3f(0.0,0.0,0.61);
+    glutSolidTorus (1.0, 8.1,  20,  20);
+    glPopMatrix();
     
     glPopMatrix();
 }
@@ -280,8 +301,7 @@ void display(void)
     glRotatef(rotate_x, 0.0, 0.0, 1.0 );
     glRotatef(rotate_y, 1.0, 0.0, 0.0);
     
-    glColor3f(0.9,0.5,0.0);
-    //glScaled(5,5,5);
+    //glColor3f(0.9,0.5,0.0);
     minionBody();
     
     glutSwapBuffers();
