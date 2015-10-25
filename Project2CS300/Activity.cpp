@@ -30,7 +30,7 @@ static int moving = 0, startx, starty;
 // Initialize OpenGL graphics
 void init(void)
 {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // black background
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // black background
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(angle, 1.0, nearP, farP);
@@ -40,7 +40,7 @@ void init(void)
     GLfloat black[] = { 0.0, 0.0, 0.0, 1.0 };
     GLfloat cyan[] = { 0.0, 1.0, 1.0, 1.0 };
     GLfloat white[] = { 1.0, 1.0, 1.0, 1.0 };
-    GLfloat direction[] = {600.0, 600.0, 600.0, 0.0};
+    GLfloat direction[] = {0.0, 0.0, 100.0, 0.0};
     
     glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, cyan);
     glMaterialfv(GL_FRONT, GL_SPECULAR, white);
@@ -75,11 +75,18 @@ void minionBody()
     glutSolidSphere(8.0,20,20); //bottom sphere
     glPopMatrix();
     
+    //googles strap
+    glPushMatrix();
+    glColor3f(0.36,0.25,0.20);
+    glRotatef(90,1.0,0.0,0.0);
+    glutSolidTorus (1.0,7.1,30,120);
+    glPopMatrix();
+    
     //right goggles
     glPushMatrix();
     glColor3f(0.90,0.91,0.98);
     glTranslatef(3.0,0.0,6.0);
-    for (float i = 2.0; i < 3; i = i + 0.05)
+    for (float i = 2.0; i < 3; i = i + 0.001)
         gluCylinder(obj,i,i,2.5,50,50);
     glPopMatrix();
     
@@ -87,7 +94,7 @@ void minionBody()
     glPushMatrix();
     glColor3f(0.90,0.91,0.98);
     glTranslatef(-3.0,0.0,6.0);
-    for (float i = 2.0; i < 3; i = i + 0.05)
+    for (float i = 2.0; i < 3; i = i + 0.001)
         gluCylinder(obj,i,i,2.5,50,50);
     glPopMatrix();
     
@@ -129,55 +136,9 @@ void minionBody()
     glutSolidSphere(0.6,20,20); //tiny black part
     glPopMatrix();
     
-    //smile
-    glPushMatrix();
-    //for (float i = 0.0; i < 10; i = i + 0.1)
-    glPointSize(2.0);
-    glColor3f(1.0,0.0,0.0);
-    glBegin(GL_POINTS);
-    glVertex3f(3.0,-5.0,7.5);
-    glVertex3f(2.8,-5.1,7.5);
-    
-    glVertex3f(2.6,-5.2,7.6);
-    
-    glVertex3f(2.4,-5.3,7.7);
-    glVertex3f(2.2,-5.4,7.7);
-    
-    glVertex3f(2.0,-5.5,7.8);
-    glVertex3f(1.8,-5.5,7.8);
-    
-    glVertex3f(1.6,-5.5,7.9);
-    glVertex3f(1.4,-5.5,7.9);
-    
-    glVertex3f(1.2,-5.5,8.0);
-    glVertex3f(1.0,-5.5,8.0);
-    glVertex3f(0.8,-5.5,8.0);
-    glVertex3f(0.6,-5.5,8.0);
-    glVertex3f(0.4,-5.5,8.0);
-    glVertex3f(0.2,-5.5,8.0);
-    glVertex3f(0.0,-5.5,8.0);
-    glVertex3f(-0.2,-5.5,8.0);
-    glVertex3f(-0.4,-5.5,8.0);
-    glVertex3f(-0.6,-5.5,8.0);
-    glVertex3f(-0.8,-5.5,8.0);
-    glVertex3f(-1.0,-5.5,8.0);
-    glVertex3f(-1.2,-5.5,8.0);
-    
-    glVertex3f(-1.4,-5.5,7.9);
-    glVertex3f(-1.6,-5.5,7.9);
-    
-    glVertex3f(-1.8,-5.5,7.8);
-    glVertex3f(-2.0,-5.5,7.8);
-    
-    glVertex3f(-2.2,-5.4,7.7);
-    glVertex3f(-2.4,-5.3,7.7);
-    
-    glVertex3f(-2.6,-5.2,7.6);
-    
-    glVertex3f(-2.8,-5.1,7.5);
-    glVertex3f(-3.0,-5.0,7.5);
-    glEnd();
-    glPopMatrix();
+    /************************************************
+     ADD SMILE HERE! :D :D :D
+     ************************************************/
     
     //clothing
     glPushMatrix();
@@ -240,7 +201,6 @@ void minionBody()
     glVertex3f(-3.0,-7.5,7.5);
     glEnd();
     
-    
     //right side clothing
     glBegin(GL_POLYGON);
     glVertex3f(1.6,-7.5,7.9);
@@ -276,18 +236,21 @@ void minionBody()
     glVertex3f(3.0,-12.1,7.5);
     glVertex3f(3.0,-7.5,7.5);
     glEnd();
+    glPopMatrix();
     
     //shoulder straps
     glPushMatrix();
     glColor3f(0.0,0.0,0.61);
-    glutSolidTorus (1.0, 8.1,  20,  20);
-    glPopMatrix();
-    
+    glTranslatef(0.0,-7.5,0.0);
+    glRotatef(90,1.0,0.0,0.0);
+    glutSolidTorus (1.0,7.3,30,120);
     glPopMatrix();
 }
+
 void display(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(0.6f, 0.6f, 0.6f, 1.0f);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     
@@ -300,12 +263,12 @@ void display(void)
     
     glRotatef(rotate_x, 0.0, 0.0, 1.0 );
     glRotatef(rotate_y, 1.0, 0.0, 0.0);
-    
-    //glColor3f(0.9,0.5,0.0);
+
     minionBody();
     
     glutSwapBuffers();
 }
+
 
 // reshape function
 void reshape(int w, int h)
