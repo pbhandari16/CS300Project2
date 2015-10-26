@@ -12,7 +12,7 @@
 #include <OpenGL/glu.h>
 #include <GLUT/glut.h>
 #include <cstdlib>
-
+#include <iostream>
 /***** Global variables *****/
 GLint win_width = 800;      // window dimensions
 GLint win_height = 800;
@@ -26,22 +26,29 @@ static GLfloat rotate_x = 0.0, rotate_y = 0.0, rotate_z = 0.0;
 
 // Rotation for arms
 static GLfloat armVert = 0.0, strechX = 0.0, strechY = 0.0;
-bool maxWave = false, handUp = false;
+bool maxWave = false, waveHand = false;
 
 // Mouse function related variables
 static int moving = 0, startx, starty;
 
+float runningAngle = 0;
+bool running = false;
+int flag = 1;
+float speed = 2;
+float dist = 0;
+
+using namespace std;
 // Initialize OpenGL graphics
 void init(void)
 {
-    glClearColor(0.6f, 0.6f, 0.6f, 1.0f); // gray background
+    glClearColor(0.6f, 0.6f, 0.6f, 1.0f); // black background
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(angle, 1.0, nearP, farP);
     gluLookAt(0.0, 0.0, 350.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-    GLfloat gray[] = { 0.4, 0.4, 0.4, 1.0 };
+    GLfloat gray[] = { 0.5, 0.5, 0.5, 1.0 };
     GLfloat cyan[] = { 0.0, 1.0, 1.0, 1.0 };
     GLfloat white[] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat direction[] = {1.0, 1.0, 1.0, 0.0};
@@ -138,8 +145,34 @@ void drawShoeBody(float l, float w)
     glEnd();
     //glPopMatrix();
 }
+void minionHair()
+{
+    //first hair
+    glPushMatrix();
+    
+    double x = 1;
+    double y = sqrt(64 - 2);
+    double z = 1;
+    glTranslatef(x, y, z);
+    int density = 100;
+    glLineWidth(2);
+    glBegin(GL_LINE_LOOP);
+    glVertex3f(0, 0, 0);
+    for (int i = 0; i <= density; i++)
+    {
+        x = (30/density)*i;
+        y = -(x-0.2)*(x-0.2) + 0.04;
+        glVertex3f(x, y, 1);
+    }
+    glEnd();
+    glPopMatrix();
+}
+
 void minionFeet()
 {
+    
+    glPushMatrix();
+    glRotatef(runningAngle, 1.0, 0.0, 0.0);
     //Right leg
     glPushMatrix();
     glTranslatef(3.0, -16.0, 0.0);
@@ -154,7 +187,18 @@ void minionFeet()
     gluCylinder(obj, 1.5, 1.4, 3.2, 30, 30);
     glPopMatrix();
     
+    glPushMatrix();
+    glColor3f(1.0, 1.0, 1.0);
+    glTranslatef(3, -23.3, 0.0);
+    //drawCuboid(3, 2, 3);
+    glTranslatef(0, -1, 1.5);
+    drawShoeTip();
+    drawShoeBody(3, 2);
+    glPopMatrix();
+    glPopMatrix();
     //Left leg
+    glPushMatrix();
+    glRotatef(-runningAngle, 1.0, 0.0, 0.0);
     glPushMatrix();
     glTranslatef(-3.0, -16.0, 0.0);
     glColor3f(0.0,0.0,0.61);
@@ -192,8 +236,7 @@ void minionFeet()
 }
 void minionBody()
 {
-    obj = gluNewQuadric(); //creates a new quadric object
-    glScaled(5,5,5);
+    
     glPushMatrix();
     glColor3f(0.9,0.5,0.0);
     glRotatef(90.0,1.0,0.0,0.0);
@@ -401,7 +444,6 @@ void minionBody()
 void minionArm(bool isLeft, bool handUp)
 {
     glColor3f(0.9,0.5,0.0);
-    obj = gluNewQuadric();
     //cylinder: @para: base radius/top radius/height/slices/stacks
     GLfloat radi = 1.5, fingerRadi = 0.7;
     
@@ -484,26 +526,29 @@ void display(void)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glClearColor(0.6, 0.6, 0.6, 0.6);
-    
+    obj = gluNewQuadric();
     //    glMatrixMode( GL_MODELVIEW );
     //    glLoadIdentity();
     glRotatef(rotate_x, 1.0, 0.0, 0.0 );
     glRotatef(rotate_y, 0.0, 1.0, 0.0);
     glRotatef(rotate_z, 0.0, 0.0, 1.0);
     
+    
+    glTranslatef(0.0, 0.0, dist);
+    glScalef(2, 2, 2);
     //glColor3f(0.9,0.5,0.0);
     minionBody();
     minionFeet();
     
     // left arm
     glPushMatrix();
-    if (handUp)
+    if (waveHand)
     {
         glTranslatef(-8.0, -7.0, 0.0);
     }
     else
         glTranslatef(-7.8, -11.0, 0.0);
-    minionArm(true, handUp);
+    minionArm(true, waveHand);
     glPopMatrix();
     
     // right arm
@@ -559,13 +604,16 @@ void keyboard(unsigned char key, int x, int y)
                 rotate_y -= 10.0;
             break;
         case 'y':
-            handUp = !handUp;
+            waveHand = !waveHand;
             break;
         case 'z':
             rotate_z += 5;
             break;
         case 'x':
             rotate_z += -5;
+            break;
+        case 'r':
+            running = true;
             break;
         case 113:
             exit(0);
@@ -617,70 +665,74 @@ static void motion(int x, int y)
     }
 }
 
+void Animate(void)
+{
+    if (running)
+    {
+        if (runningAngle > 5)
+            flag = -1;
+        if (runningAngle < -5)
+            flag = 1;
+        runningAngle += flag * speed;
+        dist += speed;
+    }
+    
+    glutPostRedisplay();
+}
+
 void menuSelect(int value)
 {
     
     switch (value)
     {
-        case 1: moving = GL_TRUE; //start the animation
-            //glutIdleFunc(Animate);
+        case 1: running = GL_TRUE;
+            speed = 2;//start the animation
+            glutIdleFunc(Animate);
             break;
-            
-        case 2: moving = GL_FALSE; //stop the animation
+        case 2:
+            running = GL_TRUE;
+            speed = 5;
+            glutIdleFunc(Animate);
+            break;
+        case 3:
+            running = GL_FALSE;
+            runningAngle = 0;
+            waveHand = GL_FALSE;
             glutIdleFunc(NULL);
             break;
-            
-        case 3:
+        case 4:
+            waveHand = GL_TRUE;
+            glutIdleFunc(Animate);
+            break;
+        case 5:
+            waveHand = GL_TRUE;
+            glutIdleFunc(Animate);
+            break;
+        case 7:
+            running = GL_FALSE;
+            dist = 0;
+            runningAngle = 0;
+            glutPostRedisplay();
+            break;
+        case 6:
             exit(0); //quit application
             break;
     }
 }
 
-void Animate()
-{
-    float stretchAmt = 0.1;
-    float yamt = 0.1;
-    // Add here
-    if (!maxWave && armVert > -60)
-    {
-        strechX -= stretchAmt;
-        strechY += yamt;
-        armVert -= 5.0;
-    }
-    else if (!maxWave && armVert <= -60)
-    {
-        maxWave = !maxWave;
-        strechX += stretchAmt;
-        strechY -= yamt;
-        armVert += 5.0;
-    }
-    else if (maxWave && armVert >= 0)
-    {
-        maxWave = !maxWave;
-        strechX -= stretchAmt;
-        strechY += yamt;
-        armVert -= 5.0;
-    }
-    else
-    {
-        strechX += stretchAmt;
-        strechY -= yamt;
-        armVert += 5.0;
-    }
-    glutPostRedisplay();
-}
 
 void Visible(int state)
 {
     
     if (state == GLUT_VISIBLE)
     {
-        if (moving) glutIdleFunc(Animate); //if visible and moving then animate it
+        if (running) glutIdleFunc(Animate); //if visible and moving then animate it
     }
     
     else
     {
-        if (moving) glutIdleFunc(NULL); //if invisible and moving then stop animation
+        if (running) glutIdleFunc(NULL);
+        cout << "Minion Stopped!" << '\n';//if invisible and moving then stop animation
         
     }
 }
@@ -699,12 +751,16 @@ int main(int argc, char **argv)
     glutMotionFunc(motion);
     glutKeyboardFunc(keyboard);
     glutSpecialFunc(specialKeys);
-    glutIdleFunc(Animate);
     glutVisibilityFunc(Visible);
     glutCreateMenu(menuSelect);
-    glutAddMenuEntry("Marathon Man", 1); //start animation
-    glutAddMenuEntry("Wave", 2); //start waving animation
-    glutAddMenuEntry("Quit", 3); //quit
+    glutIdleFunc(Animate);
+    glutAddMenuEntry("walk", 1); //start animation
+    glutAddMenuEntry("run", 2); //stop animation
+    glutAddMenuEntry("stop", 3);
+    glutAddMenuEntry("slow wave", 4);
+    glutAddMenuEntry("fast wave", 5);
+    glutAddMenuEntry("Quit", 6); //quit
+    glutAddMenuEntry("reset", 7);
     glutAttachMenu(GLUT_RIGHT_BUTTON);
     init();
     
