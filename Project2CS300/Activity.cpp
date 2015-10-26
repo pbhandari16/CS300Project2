@@ -3,7 +3,7 @@
  *
  * Nan Jiang, Pratistha Bhandari, Xiangyu Li *
  *
- * Activity.cpp -
+ * Activity.cpp - An implementation file using OpenGL to model a Minion.
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -154,7 +154,7 @@ void minionFeet()
     glPushMatrix();
     glTranslatef(-3.0, -16.0, 0.0);
     glColor3f(0.0,0.0,0.61);
-
+    
     glRotatef(90, 1.0, 0.0, 0.0);
     gluCylinder(obj, 3, 2, 6, 30, 30);
     glPopMatrix();
@@ -193,7 +193,7 @@ void minionBody()
     glPushMatrix();
     glColor3f(0.9,0.5,0.0);
     glRotatef(90.0,1.0,0.0,0.0);
-   	gluCylinder(obj,8.0,8.0,12,50,50); //middle body
+    gluCylinder(obj,8.0,8.0,12,50,50); //middle body
     glPopMatrix();
     
     glPushMatrix();
@@ -207,7 +207,7 @@ void minionBody()
     glutSolidSphere(8.0,20,20); //bottom sphere
     glPopMatrix();
     
-    //googles strap
+    //goggles strap
     glPushMatrix();
     glColor3f(0.36,0.25,0.20);
     glRotatef(90,1.0,0.0,0.0);
@@ -394,6 +394,75 @@ void minionBody()
     glPopMatrix();
 }
 
+void minionArm(bool isLeft)
+{
+    glColor3f(0.9,0.5,0.0);
+    obj = gluNewQuadric();
+    //cylinder: @para: base radius/top radius/height/slices/stacks
+    GLfloat radi = 1.5, fingerRadi = 0.7;
+    
+    int sign = isLeft ? 1 : -1; // left/right parameters offset
+    
+    // upper arm
+    glPushMatrix();
+    glRotatef(sign * -25, 0.0, 0.0, 1.0);
+    glRotatef(-90, 1.0, 0.0, 0.0);
+    gluCylinder(obj, radi, radi, 4, 30, 5);
+    gluSphere(obj, radi, 30, 30);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glTranslatef(sign * -0.44, -1.8, 0.0);
+    glRotatef(sign * -12, 0.0, 0.0, 1.0);
+    glRotatef(-90, 1.0, 0.0, 0.0);
+    gluCylinder(obj, radi, radi, 2.0, 30, 5);
+    gluSphere(obj, radi, 30, 30);
+    glPopMatrix();
+    
+    //fore arm
+    glPushMatrix();
+    glTranslatef(sign * -0.4, -3.0, 0.0);
+    glRotatef(sign * 1, 0.0, 0.0, 1.0);
+    glRotatef(-90, 1.0, 0.0, 0.0);
+    gluCylinder(obj, radi, radi, 2.0, 30, 5);
+    gluSphere(obj, radi, 30, 30);
+    glPopMatrix();
+    
+    // glove (hand)
+    glColor3f(0.0, 0.0, 0.0);
+    glPushMatrix();
+    glTranslatef(sign * -0.6, -5.2, 0.0);
+    glRotatef(sign * 2, 0.0, 0.0, 1.0);
+    glRotatef(-90, 1.0, 0.0, 0.0);
+    gluCylinder(obj, radi + 0.1, radi + 0.5, 1.6, 30, 5);
+    gluSphere(obj, radi + 0.1, 30, 30);
+    glPopMatrix();
+    
+    // fingers
+    glPushMatrix();
+    glTranslatef(sign * -0.6, -7.0, 1.0);
+    glRotatef(sign * 2, 0.0, 0.0, 1.0);
+    glRotatef(-80, 1.0, 0.0, 0.0);
+    gluCylinder(obj, fingerRadi, fingerRadi, 1.4, 30, 5);
+    gluSphere(obj, fingerRadi, 30, 30);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glTranslatef(sign * 0.7, -6.6, 0.8);
+    glRotatef(sign * 20, 0.0, 0.0, 1.0);
+    glRotatef(-80, 1.0, 0.0, 0.0);
+    gluCylinder(obj, fingerRadi, fingerRadi, 1.4, 30, 5);
+    gluSphere(obj, fingerRadi, 30, 30);
+    glPopMatrix();
+    
+    glPushMatrix();
+    glTranslatef(sign * -1.8, -6.6, 0.8);
+    glRotatef(sign * -20, 0.0, 0.0, 1.0);
+    glRotatef(-80, 1.0, 0.0, 0.0);
+    gluCylinder(obj, fingerRadi, fingerRadi, 1.4, 30, 5);
+    gluSphere(obj, fingerRadi, 30, 30);
+    glPopMatrix();
+}
 
 void display(void)
 {
@@ -402,8 +471,8 @@ void display(void)
     glLoadIdentity();
     glClearColor(0.6, 0.6, 0.6, 0.6);
     
-//    glMatrixMode( GL_MODELVIEW );
-//    glLoadIdentity();
+    //    glMatrixMode( GL_MODELVIEW );
+    //    glLoadIdentity();
     glRotatef(rotate_x, 1.0, 0.0, 0.0 );
     glRotatef(rotate_y, 0.0, 1.0, 0.0);
     glRotatef(rotate_z, 0.0, 0.0, 1.0);
@@ -411,6 +480,18 @@ void display(void)
     //glColor3f(0.9,0.5,0.0);
     minionBody();
     minionFeet();
+    
+    // left arm
+    glPushMatrix();
+    glTranslatef(-7.8, -11.0, 0.0);
+    minionArm(true);
+    glPopMatrix();
+    // right arm
+    glPushMatrix();
+    glTranslatef(7.8, -11.0, 0.0);
+    minionArm(false);
+    glPopMatrix();
+    
     glutSwapBuffers();
 }
 
@@ -432,6 +513,7 @@ void reshape(int w, int h)
 // keyboard callback function
 void keyboard(unsigned char key, int x, int y)
 {
+    int mod;
     switch (key)
     {
         case 'w':
@@ -441,6 +523,20 @@ void keyboard(unsigned char key, int x, int y)
         case 'f':
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             display();
+            break;
+        case 97:    //'a'
+            mod = glutGetModifiers();
+            if (mod == GLUT_ACTIVE_ALT)
+                rotate_x += 10.0;
+            else
+                rotate_x -= 10.0;
+            break;
+        case 115:   //'s'
+            mod = glutGetModifiers();
+            if (mod == GLUT_ACTIVE_ALT)
+                rotate_y += 10.0;
+            else
+                rotate_y -= 10.0;
             break;
         case 'z':
             rotate_z += 5;
@@ -485,6 +581,19 @@ static void mouse(int button, int state, int x, int y)
         }
     }
 }
+
+// motion function
+static void motion(int x, int y)
+{
+    if (moving) {
+        rotate_x = rotate_x + (x - startx);
+        rotate_y = rotate_y + (y - starty);
+        startx = x;
+        starty = y;
+        glutPostRedisplay();
+    }
+}
+
 void menuSelect(int value)
 {
     
@@ -523,17 +632,6 @@ void Visible(int state)
     {
         if (moving) glutIdleFunc(NULL); //if invisible and moving then stop animation
         
-    }
-}
-// motion function
-static void motion(int x, int y)
-{
-    if (moving) {
-        rotate_x = rotate_x + (x - startx);
-        rotate_y = rotate_y + (y - starty);
-        startx = x;
-        starty = y;
-        glutPostRedisplay();
     }
 }
 
