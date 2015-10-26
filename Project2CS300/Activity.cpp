@@ -532,7 +532,6 @@ void menuSelect(int value)
 
 void Animate(void)
 {
-    // Add here
     
     glutPostRedisplay();
 }
