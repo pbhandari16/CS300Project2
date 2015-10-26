@@ -3,7 +3,7 @@
  *
  * Nan Jiang, Pratistha Bhandari, Xiangyu Li *
  *
- * Activity.cpp -
+ * Activity.cpp - An implementation file using OpenGL to model a Minion.
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -24,20 +24,24 @@ GLUquadricObj *obj;         // Pointer for quadric objects.
 // Rotation of the whole object
 static GLfloat rotate_x = 0.0, rotate_y = 0.0, rotate_z = 0.0;
 
+// Rotation for arms
+static GLfloat armVert = 0.0, strechX = 0.0, strechY = 0.0;
+bool maxWave = false, handUp = false;
+
 // Mouse function related variables
 static int moving = 0, startx, starty;
 
 // Initialize OpenGL graphics
 void init(void)
 {
-    glClearColor(0.6f, 0.6f, 0.6f, 1.0f); // black background
+    glClearColor(0.6f, 0.6f, 0.6f, 1.0f); // gray background
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(angle, 1.0, nearP, farP);
     gluLookAt(0.0, 0.0, 350.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-    GLfloat black[] = { 0.0, 0.0, 0.0, 1.0 };
+    GLfloat gray[] = { 0.4, 0.4, 0.4, 1.0 };
     GLfloat cyan[] = { 0.0, 1.0, 1.0, 1.0 };
     GLfloat white[] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat direction[] = {1.0, 1.0, 1.0, 0.0};
@@ -46,7 +50,7 @@ void init(void)
     glMaterialfv(GL_FRONT, GL_SPECULAR, white);
     glMaterialf(GL_FRONT, GL_SHININESS, 100);
     
-    glLightfv(GL_LIGHT0, GL_AMBIENT, black);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, gray);
     glLightfv(GL_LIGHT0, GL_SPECULAR, white);
     glLightfv(GL_LIGHT0, GL_POSITION, direction);
     
@@ -193,7 +197,7 @@ void minionBody()
     glPushMatrix();
     glColor3f(0.9,0.5,0.0);
     glRotatef(90.0,1.0,0.0,0.0);
-   	gluCylinder(obj,8.0,8.0,12,50,50); //middle body
+    gluCylinder(obj,8.0,8.0,12,50,50); //middle body
     glPopMatrix();
     
     glPushMatrix();
@@ -394,7 +398,7 @@ void minionBody()
     glPopMatrix();
 }
 
-void minionArm(bool isLeft)
+void minionArm(bool isLeft, bool handUp)
 {
     glColor3f(0.9,0.5,0.0);
     obj = gluNewQuadric();
@@ -404,6 +408,14 @@ void minionArm(bool isLeft)
     int sign = isLeft ? 1 : -1; // left/right parameters offset
     
     // upper arm
+    glPushMatrix();
+    if (handUp)
+    {
+        glRotatef(-180, 1.0, 0.0, 0.0);
+        glTranslatef(strechX, strechY, 0.0);
+        glRotatef(armVert, 0.0, 0.0, 1.0);
+    }
+    
     glPushMatrix();
     glRotatef(sign * -25, 0.0, 0.0, 1.0);
     glRotatef(-90, 1.0, 0.0, 0.0);
@@ -427,7 +439,7 @@ void minionArm(bool isLeft)
     gluCylinder(obj, radi, radi, 2.0, 30, 5);
     gluSphere(obj, radi, 30, 30);
     glPopMatrix();
-     
+    
     // glove (hand)
     glColor3f(0.0, 0.0, 0.0);
     glPushMatrix();
@@ -462,6 +474,8 @@ void minionArm(bool isLeft)
     gluCylinder(obj, fingerRadi, fingerRadi, 1.4, 30, 5);
     gluSphere(obj, fingerRadi, 30, 30);
     glPopMatrix();
+    
+    glPopMatrix();
 }
 
 void display(void)
@@ -483,13 +497,19 @@ void display(void)
     
     // left arm
     glPushMatrix();
-    glTranslatef(-7.8, -11.0, 0.0);
-    minionArm(true);
+    if (handUp)
+    {
+        glTranslatef(-8.0, -7.0, 0.0);
+    }
+    else
+        glTranslatef(-7.8, -11.0, 0.0);
+    minionArm(true, handUp);
     glPopMatrix();
+    
     // right arm
     glPushMatrix();
     glTranslatef(7.8, -11.0, 0.0);
-    minionArm(false);
+    minionArm(false, false);
     glPopMatrix();
     
     glutSwapBuffers();
@@ -538,6 +558,9 @@ void keyboard(unsigned char key, int x, int y)
             else
                 rotate_y -= 10.0;
             break;
+        case 'y':
+            handUp = !handUp;
+            break;
         case 'z':
             rotate_z += 5;
             break;
@@ -581,6 +604,19 @@ static void mouse(int button, int state, int x, int y)
         }
     }
 }
+
+// motion function
+static void motion(int x, int y)
+{
+    if (moving) {
+        rotate_x = rotate_x + (x - startx);
+        rotate_y = rotate_y + (y - starty);
+        startx = x;
+        starty = y;
+        glutPostRedisplay();
+    }
+}
+
 void menuSelect(int value)
 {
     
@@ -600,10 +636,37 @@ void menuSelect(int value)
     }
 }
 
-void Animate(void)
+void Animate()
 {
+    float stretchAmt = 0.1;
+    float yamt = 0.1;
     // Add here
-    
+    if (!maxWave && armVert > -60)
+    {
+        strechX -= stretchAmt;
+        strechY += yamt;
+        armVert -= 5.0;
+    }
+    else if (!maxWave && armVert <= -60)
+    {
+        maxWave = !maxWave;
+        strechX += stretchAmt;
+        strechY -= yamt;
+        armVert += 5.0;
+    }
+    else if (maxWave && armVert >= 0)
+    {
+        maxWave = !maxWave;
+        strechX -= stretchAmt;
+        strechY += yamt;
+        armVert -= 5.0;
+    }
+    else
+    {
+        strechX += stretchAmt;
+        strechY -= yamt;
+        armVert += 5.0;
+    }
     glutPostRedisplay();
 }
 
@@ -619,17 +682,6 @@ void Visible(int state)
     {
         if (moving) glutIdleFunc(NULL); //if invisible and moving then stop animation
         
-    }
-}
-// motion function
-static void motion(int x, int y)
-{
-    if (moving) {
-        rotate_x = rotate_x + (x - startx);
-        rotate_y = rotate_y + (y - starty);
-        startx = x;
-        starty = y;
-        glutPostRedisplay();
     }
 }
 
@@ -651,7 +703,7 @@ int main(int argc, char **argv)
     glutVisibilityFunc(Visible);
     glutCreateMenu(menuSelect);
     glutAddMenuEntry("Marathon Man", 1); //start animation
-    glutAddMenuEntry("Take a breather", 2); //stop animation
+    glutAddMenuEntry("Wave", 2); //start waving animation
     glutAddMenuEntry("Quit", 3); //quit
     glutAttachMenu(GLUT_RIGHT_BUTTON);
     init();
