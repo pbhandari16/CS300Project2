@@ -48,7 +48,7 @@ void init(void)
     gluLookAt(0.0, 0.0, 350.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-    GLfloat gray[] = { 0.4, 0.4, 0.4, 1.0 };
+    GLfloat gray[] = { 0.5, 0.5, 0.5, 1.0 };
     GLfloat cyan[] = { 0.0, 1.0, 1.0, 1.0 };
     GLfloat white[] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat direction[] = {1.0, 1.0, 1.0, 0.0};
@@ -533,6 +533,8 @@ void display(void)
     glRotatef(rotate_y, 0.0, 1.0, 0.0);
     glRotatef(rotate_z, 0.0, 0.0, 1.0);
     
+    
+    glTranslatef(0.0, 0.0, dist);
     glScalef(2, 2, 2);
     //glColor3f(0.9,0.5,0.0);
     minionBody();
