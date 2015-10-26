@@ -610,7 +610,6 @@ void Animate(void)
         switch (face) {
             case 0:
                 trans_z += speed;
-                //cout << "Check";
                 break;
             case 1:
                 trans_x += speed;
@@ -688,33 +687,44 @@ void menuSelect(int value)
             break;
         case 3:
             running = GL_FALSE;
-            //stop the animation
             runningAngle = 0;
             waveHand = GL_FALSE;
             maxWave = GL_FALSE;
             fastFlag = 0;
+            armVert = 0.0;
             glutIdleFunc(NULL);
             break;
         case 4:
             waveHand = GL_TRUE;
             maxWave = GL_FALSE;
             fastFlag = 0;
+            armVert = 0.0;
             glutIdleFunc(Animate);
             break;
         case 5:
             waveHand = GL_TRUE;
             maxWave = GL_FALSE;
             fastFlag = 1;
+            armVert = 0.0;
             glutIdleFunc(Animate);
             break;
         case 7:
             running = GL_FALSE;
+            waveHand = GL_FALSE;
+            maxWave = GL_FALSE;
             dist = 0;
             runningAngle = 0;
-            glutPostRedisplay();
+            rotate_x = rotate_y = rotate_z = 0.0;
+            trans_x = trans_y = trans_z = 0.0;
+            fastFlag = 0;
+            armVert = 0.0;
+            face = 0;
+            glutIdleFunc(NULL);
             break;
         case 6:
             exit(0); //quit application
+            break;
+        default:
             break;
     }
 }
@@ -757,7 +767,7 @@ int main(int argc, char **argv)
     glutAddMenuEntry("stop", 3);
     glutAddMenuEntry("slow wave", 4);
     glutAddMenuEntry("fast wave", 5);
-    glutAddMenuEntry("Quit", 6); //quit
+    glutAddMenuEntry("quit", 6); //quit
     glutAddMenuEntry("reset", 7);
     glutAttachMenu(GLUT_RIGHT_BUTTON);
     init();
