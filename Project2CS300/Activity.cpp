@@ -475,66 +475,6 @@ void minionArm(bool isLeft, bool handUp)
     gluSphere(obj, fingerRadi, 30, 30);
     glPopMatrix();
     
-    int sign = isLeft ? 1 : -1; // left/right parameters offset
-    
-    // upper arm
-    glPushMatrix();
-    glRotatef(sign * -25, 0.0, 0.0, 1.0);
-    glRotatef(-90, 1.0, 0.0, 0.0);
-    gluCylinder(obj, radi, radi, 4, 30, 5);
-    gluSphere(obj, radi, 30, 30);
-    glPopMatrix();
-    
-    glPushMatrix();
-    glTranslatef(sign * -0.44, -1.8, 0.0);
-    glRotatef(sign * -12, 0.0, 0.0, 1.0);
-    glRotatef(-90, 1.0, 0.0, 0.0);
-    gluCylinder(obj, radi, radi, 2.0, 30, 5);
-    gluSphere(obj, radi, 30, 30);
-    glPopMatrix();
-    
-    //fore arm
-    glPushMatrix();
-    glTranslatef(sign * -0.4, -3.0, 0.0);
-    glRotatef(sign * 1, 0.0, 0.0, 1.0);
-    glRotatef(-90, 1.0, 0.0, 0.0);
-    gluCylinder(obj, radi, radi, 2.0, 30, 5);
-    gluSphere(obj, radi, 30, 30);
-    glPopMatrix();
-    
-    // glove (hand)
-    glColor3f(0.0, 0.0, 0.0);
-    glPushMatrix();
-    glTranslatef(sign * -0.6, -5.2, 0.0);
-    glRotatef(sign * 2, 0.0, 0.0, 1.0);
-    glRotatef(-90, 1.0, 0.0, 0.0);
-    gluCylinder(obj, radi + 0.1, radi + 0.5, 1.6, 30, 5);
-    gluSphere(obj, radi + 0.1, 30, 30);
-    glPopMatrix();
-    
-    // fingers
-    glPushMatrix();
-    glTranslatef(sign * -0.6, -7.0, 1.0);
-    glRotatef(sign * 2, 0.0, 0.0, 1.0);
-    glRotatef(-80, 1.0, 0.0, 0.0);
-    gluCylinder(obj, fingerRadi, fingerRadi, 1.4, 30, 5);
-    gluSphere(obj, fingerRadi, 30, 30);
-    glPopMatrix();
-    
-    glPushMatrix();
-    glTranslatef(sign * 0.7, -6.6, 0.8);
-    glRotatef(sign * 20, 0.0, 0.0, 1.0);
-    glRotatef(-80, 1.0, 0.0, 0.0);
-    gluCylinder(obj, fingerRadi, fingerRadi, 1.4, 30, 5);
-    gluSphere(obj, fingerRadi, 30, 30);
-    glPopMatrix();
-    
-    glPushMatrix();
-    glTranslatef(sign * -1.8, -6.6, 0.8);
-    glRotatef(sign * -20, 0.0, 0.0, 1.0);
-    glRotatef(-80, 1.0, 0.0, 0.0);
-    gluCylinder(obj, fingerRadi, fingerRadi, 1.4, 30, 5);
-    gluSphere(obj, fingerRadi, 30, 30);
     glPopMatrix();
 }
 
