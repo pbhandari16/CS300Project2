@@ -35,8 +35,12 @@ float runningAngle = 0;
 bool running = false;
 int flag = 1;
 float speed = 2;
-float dist = 0;
+int dist = 0;
+int face = 0;
 
+float trans_x = 0;
+float trans_y = 0;
+float trans_z = 0;
 using namespace std;
 // Initialize OpenGL graphics
 void init(void)
@@ -521,13 +525,15 @@ void display(void)
     obj = gluNewQuadric();
     //    glMatrixMode( GL_MODELVIEW );
     //    glLoadIdentity();
+    glTranslatef(trans_x, trans_y, trans_z);
     glRotatef(rotate_x, 1.0, 0.0, 0.0 );
     glRotatef(rotate_y, 0.0, 1.0, 0.0);
     glRotatef(rotate_z, 0.0, 0.0, 1.0);
     
     
-    glTranslatef(0.0, 0.0, dist);
+   
     glScalef(2, 2, 2);
+
     //glColor3f(0.9,0.5,0.0);
     minionBody();
     minionFeet();
@@ -666,7 +672,34 @@ void Animate(void)
         if (runningAngle < -5)
             flag = 1;
         runningAngle += flag * speed;
+        
         dist += speed;
+        switch (face) {
+            case 0:
+                trans_z += speed;
+                //cout << "Check";
+                break;
+            case 1:
+                trans_x += speed;
+                break;
+            case 2:
+                trans_z -= speed;
+                break;
+            case 3:
+                trans_x -= speed;
+                break;
+            default:
+                break;
+        }
+        
+        if (dist >= 80)
+        {
+            rotate_y +=90;
+            face = (face+1)%4;
+            dist = 0;
+            cout << face << '\n';
+        }
+        
     }
 
     glutPostRedisplay();
