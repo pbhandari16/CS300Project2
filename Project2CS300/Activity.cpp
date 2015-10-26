@@ -196,13 +196,14 @@ void minionFeet()
     drawShoeBody(3, 2);
     glPopMatrix();
     glPopMatrix();
+    
     //Left leg
     glPushMatrix();
     glRotatef(-runningAngle, 1.0, 0.0, 0.0);
+    
     glPushMatrix();
     glTranslatef(-3.0, -16.0, 0.0);
     glColor3f(0.0,0.0,0.61);
-    
     glRotatef(90, 1.0, 0.0, 0.0);
     gluCylinder(obj, 3, 2, 6, 30, 30);
     glPopMatrix();
@@ -222,16 +223,7 @@ void minionFeet()
     drawShoeTip();
     drawShoeBody(3, 2);
     glPopMatrix();
-    
-    glPushMatrix();
-    glColor3f(1.0, 1.0, 1.0);
-    glTranslatef(3, -23.3, 0.0);
-    //drawCuboid(3, 2, 3);
-    glTranslatef(0, -1, 1.5);
-    drawShoeTip();
-    drawShoeBody(3, 2);
     glPopMatrix();
-    
     
 }
 void minionBody()
