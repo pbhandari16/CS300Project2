@@ -134,6 +134,29 @@ void drawShoeBody(float l, float w)
     glEnd();
     //glPopMatrix();
 }
+void minionHair()
+{
+    //first hair
+    glPushMatrix();
+    
+    double x = 1;
+    double y = sqrt(64 - 2);
+    double z = 1;
+    glTranslatef(x, y, z);
+    int density = 100;
+    glLineWidth(2);
+    glBegin(GL_LINE_LOOP);
+    glVertex3f(0, 0, 0);
+    for (int i = 0; i <= density; i++)
+    {
+        x = (30/density)*i;
+        y = -(x-0.2)*(x-0.2) + 0.04;
+        glVertex3f(x, y, 1);
+    }
+    glEnd();
+    glPopMatrix();
+}
+
 void minionFeet()
 {
     //Right leg
@@ -188,8 +211,7 @@ void minionFeet()
 }
 void minionBody()
 {
-    obj = gluNewQuadric(); //creates a new quadric object
-    glScaled(5,5,5);
+    
     glPushMatrix();
     glColor3f(0.9,0.5,0.0);
     glRotatef(90.0,1.0,0.0,0.0);
@@ -408,9 +430,13 @@ void display(void)
     glRotatef(rotate_y, 0.0, 1.0, 0.0);
     glRotatef(rotate_z, 0.0, 0.0, 1.0);
     
+    glScaled(5,5,5);
+    obj = gluNewQuadric(); //creates a new quadric object
+
     //glColor3f(0.9,0.5,0.0);
     minionBody();
     minionFeet();
+    minionHair();
     glutSwapBuffers();
 }
 
