@@ -12,11 +12,12 @@
 #include <OpenGL/glu.h>
 #include <GLUT/glut.h>
 #include <cstdlib>
-#include <iostream>
+
 /***** Global variables *****/
 GLint win_width = 800;      // window dimensions
 GLint win_height = 800;
 
+// Parameters for gluPerspective()
 GLint angle = 60, nearP = 1, farP = 1000;
 
 GLUquadricObj *obj;         // Pointer for quadric objects.
@@ -32,6 +33,7 @@ static GLint fastFlag = 0;
 // Mouse function related variables
 static int moving = 0, startx, starty;
 
+// Settings for running
 float runningAngle = 0;
 bool running = false;
 int flag = 1;
@@ -42,12 +44,11 @@ int face = 0;
 float trans_x = 0;
 float trans_y = 0;
 float trans_z = 0;
-using namespace std;
 
 // Initialize OpenGL graphics
 void init(void)
 {
-    glClearColor(0.6f, 0.6f, 0.6f, 1.0f); // black background
+    glClearColor(0.6f, 0.6f, 0.6f, 1.0f); // gray background
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(angle, 1.0, nearP, farP);
@@ -71,48 +72,9 @@ void init(void)
     glEnable(GL_DEPTH_TEST);            // turn on the depth buffer
 }
 
-
-void drawCuboid(float x, float y, float z)
-{
-    glPushMatrix();
-    glBegin(GL_QUADS);
-    glColor3f(1.0, 1.0, 1.0);
-    glVertex3f(-0.5*x, 0.5*y, 0.5*z);
-    glVertex3f(-0.5*x, -0.5*y, 0.5*z);
-    glVertex3f(0.5*x, -0.5*y, 0.5*z);
-    glVertex3f(0.5*x, 0.5*y, 0.5*z);
-    
-    glVertex3f(-0.5*x, 0.5*y, -0.5*z);
-    glVertex3f(-0.5*x, -0.5*y, -0.5*z);
-    glVertex3f(0.5*x, -0.5*y, -0.5*z);
-    glVertex3f(0.5*x, 0.5*y, -0.5*z);
-    
-    glVertex3f(0.5*x, -0.5*y, 0.5*z);
-    glVertex3f(0.5*x, -0.5*y, -0.5*z);
-    glVertex3f(0.5*x, 0.5*y, -0.5*z);
-    glVertex3f(0.5*x, 0.5*y, 0.5*z);
-    
-    glVertex3f(-0.5*x, -0.5*y, 0.5*z);
-    glVertex3f(-0.5*x, -0.5*y, -0.5*z);
-    glVertex3f(-0.5*x, 0.5*y, -0.5*z);
-    glVertex3f(-0.5*x, 0.5*y, 0.5*z);
-    
-    glVertex3f(-0.5*x, 0.5*y, 0.5*z);
-    glVertex3f(-0.5*x, 0.5*y, -0.5*z);
-    glVertex3f(0.5*x, 0.5*y, -0.5*z);
-    glVertex3f(0.5*x, 0.5*y, 0.5*z);
-    
-    glVertex3f(-0.5*x, -0.5*y, 0.5*z);
-    glVertex3f(-0.5*x, -0.5*y, -0.5*z);
-    glVertex3f(0.5*x, -0.5*y, -0.5*z);
-    glVertex3f(0.5*x, -0.5*y, 0.5*z);
-    glEnd();
-    glPopMatrix();
-}
-
+// draw shoe tip
 void drawShoeTip()
 {
-    //glPushMatrix();
     int density = 250;
     glColor3f(0.0,0.0,0.0);
     glBegin(GL_POINTS);
@@ -128,12 +90,11 @@ void drawShoeTip()
         }
     }
     glEnd();
-    //glPopMatrix();
 }
 
+// draw shoe body
 void drawShoeBody(float l, float w)
 {
-    //glPushMatrix();
     glTranslatef(0, 0, -0.5*l);
     int density = 250;
     glColor3f(0.0,0.0,0.0);
@@ -149,9 +110,9 @@ void drawShoeBody(float l, float w)
         }
     }
     glEnd();
-    //glPopMatrix();
 }
 
+// draw feet
 void minionFeet()
 {
     
@@ -174,7 +135,6 @@ void minionFeet()
     glPushMatrix();
     glColor3f(1.0, 1.0, 1.0);
     glTranslatef(3, -23.3, 0.0);
-    //drawCuboid(3, 2, 3);
     glTranslatef(0, -1, 1.5);
     drawShoeTip();
     drawShoeBody(3, 2);
@@ -202,7 +162,6 @@ void minionFeet()
     glPushMatrix();
     glColor3f(1.0, 1.0, 1.0);
     glTranslatef(-3, -23.3, 0.0);
-    //drawCuboid(3, 2, 3);
     glTranslatef(0, -1, 1.5);
     drawShoeTip();
     drawShoeBody(3, 2);
@@ -210,6 +169,8 @@ void minionFeet()
     glPopMatrix();
     
 }
+
+// draw body
 void minionBody()
 {
     
@@ -291,9 +252,6 @@ void minionBody()
     glutSolidSphere(0.6,20,20); //tiny black part
     glPopMatrix();
     
-    /************************************************
-     ADD SMILE HERE! :D :D :D
-     ************************************************/
     //smile
     glPushMatrix();
     glTranslatef(0.0, -5.5, 0.0);
@@ -310,6 +268,7 @@ void minionBody()
     }
     glEnd();
     glPopMatrix();
+    
     //clothing
     glPushMatrix();
     glColor3f(0.0,0.0,1.0);
@@ -331,11 +290,8 @@ void minionBody()
     glVertex3f(1.2,-10.5,8.1);
     glEnd();
     
-    //triangle
-    glColor3f(0.0,0.0,1.0);
-    
-    glColor3f(0.0,0.0,1.0);
     //left side clothing
+    glColor3f(0.0,0.0,1.0);
     glBegin(GL_POLYGON);
     glVertex3f(-1.6,-7.5,7.9);
     glVertex3f(-1.6,-12.1,7.9);
@@ -410,13 +366,14 @@ void minionBody()
     
     //shoulder straps
     glPushMatrix();
-    glColor3f(0.0,0.0,0.61);
+    glColor3f(0.0,0.0,1.0);
     glTranslatef(0.0,-7.5,0.0);
     glRotatef(90,1.0,0.0,0.0);
     glutSolidTorus (1.0,7.3,30,120);
     glPopMatrix();
 }
 
+// draw arm
 void minionArm(bool isLeft, bool handUp)
 {
     glColor3f(0.9,0.5,0.0);
@@ -503,15 +460,23 @@ void minionArm(bool isLeft, bool handUp)
     glPopMatrix();
 }
 
+// display function
 void display(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glClearColor(0.6, 0.6, 0.6, 0.6);
+    
+    // draw floor
+    glColor3f(0.0, 1.0, 0.0);
+    glBegin(GL_QUADS);
+    glVertex3f(200.0, -52.0, 200.0);
+    glVertex3f(200.0, -52.0, -200.0);
+    glVertex3f(-200.0, -52.0, -200.0);
+    glVertex3f(-200.0, -52.0, 200.0);
+    glEnd();
+    
     obj = gluNewQuadric();
-    //    glMatrixMode( GL_MODELVIEW );
-    //    glLoadIdentity();
     glTranslatef(trans_x, trans_y, trans_z);
     glRotatef(rotate_x, 1.0, 0.0, 0.0 );
     glRotatef(rotate_y, 0.0, 1.0, 0.0);
@@ -519,7 +484,6 @@ void display(void)
     
     glScalef(2, 2, 2);
     
-    //glColor3f(0.9,0.5,0.0);
     minionBody();
     minionFeet();
     
@@ -563,7 +527,7 @@ void reshape(int w, int h)
         gluPerspective(angle, 1.0, nearP, farP);
     gluLookAt(0.0, 0.0, 350.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
     glMatrixMode(GL_MODELVIEW);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.6f, 0.6f, 0.6f, 1.0f);
 }
 
 // keyboard callback function
@@ -631,6 +595,7 @@ static void motion(int x, int y)
     }
 }
 
+// idle function
 void Animate(void)
 {
     if (running)
@@ -665,7 +630,6 @@ void Animate(void)
             rotate_y +=90;
             face = (face+1)%4;
             dist = 0;
-            cout << face << '\n';
         }
     }
     
@@ -706,6 +670,7 @@ void Animate(void)
     glutPostRedisplay();
 }
 
+// menu function
 void menuSelect(int value)
 {
     
@@ -754,7 +719,7 @@ void menuSelect(int value)
     }
 }
 
-
+// visibility function
 void Visible(int state)
 {
     
@@ -766,10 +731,10 @@ void Visible(int state)
     else
     {
         if (running) glutIdleFunc(NULL);
-        cout << "Minion Stopped!" << '\n';//if invisible and moving then stop animation
     }
 }
 
+// main function
 int main(int argc, char **argv)
 {
     
