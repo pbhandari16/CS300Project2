@@ -12,7 +12,7 @@
 #include <OpenGL/glu.h>
 #include <GLUT/glut.h>
 #include <cstdlib>
-
+#include <iostream>
 /***** Global variables *****/
 GLint win_width = 800;      // window dimensions
 GLint win_height = 800;
@@ -27,6 +27,13 @@ static GLfloat rotate_x = 0.0, rotate_y = 0.0, rotate_z = 0.0;
 // Mouse function related variables
 static int moving = 0, startx, starty;
 
+float runningAngle = 0;
+bool running = false;
+int flag = 1;
+float speed = 2;
+float dist = 0;
+
+using namespace std;
 // Initialize OpenGL graphics
 void init(void)
 {
@@ -159,6 +166,9 @@ void minionHair()
 
 void minionFeet()
 {
+    
+    glPushMatrix();
+    glRotatef(runningAngle, 1.0, 0.0, 0.0);
     //Right leg
     glPushMatrix();
     glTranslatef(3.0, -16.0, 0.0);
@@ -173,11 +183,21 @@ void minionFeet()
     gluCylinder(obj, 1.5, 1.4, 3.2, 30, 30);
     glPopMatrix();
     
+    glPushMatrix();
+    glColor3f(1.0, 1.0, 1.0);
+    glTranslatef(3, -23.3, 0.0);
+    //drawCuboid(3, 2, 3);
+    glTranslatef(0, -1, 1.5);
+    drawShoeTip();
+    drawShoeBody(3, 2);
+    glPopMatrix();
+    glPopMatrix();
     //Left leg
+    glPushMatrix();
+    glRotatef(-runningAngle, 1.0, 0.0, 0.0);
     glPushMatrix();
     glTranslatef(-3.0, -16.0, 0.0);
     glColor3f(0.0,0.0,0.61);
-    
     glRotatef(90, 1.0, 0.0, 0.0);
     gluCylinder(obj, 3, 2, 6, 30, 30);
     glPopMatrix();
@@ -197,14 +217,6 @@ void minionFeet()
     drawShoeTip();
     drawShoeBody(3, 2);
     glPopMatrix();
-    
-    glPushMatrix();
-    glColor3f(1.0, 1.0, 1.0);
-    glTranslatef(3, -23.3, 0.0);
-    //drawCuboid(3, 2, 3);
-    glTranslatef(0, -1, 1.5);
-    drawShoeTip();
-    drawShoeBody(3, 2);
     glPopMatrix();
     
     
@@ -499,13 +511,28 @@ void display(void)
     glRotatef(rotate_y, 0.0, 1.0, 0.0);
     glRotatef(rotate_z, 0.0, 0.0, 1.0);
     
-    glScaled(5,5,5);
+    
+    glTranslatef(0.0, 0.0, dist);
+    glScaled(2,2,2);
     obj = gluNewQuadric(); //creates a new quadric object
 
     //glColor3f(0.9,0.5,0.0);
     minionBody();
+    
     minionFeet();
-    minionHair();
+    //minionHair();
+    
+    // left arm
+    glPushMatrix();
+    glTranslatef(-7.8, -11.0, 0.0);
+    minionArm(true);
+    glPopMatrix();
+    // right arm
+    glPushMatrix();
+    glTranslatef(7.8, -11.0, 0.0);
+    minionArm(false);
+    glPopMatrix();
+    
     glutSwapBuffers();
 }
 
@@ -558,6 +585,9 @@ void keyboard(unsigned char key, int x, int y)
         case 'x':
             rotate_z += -5;
             break;
+        case 'r':
+            running = true;
+            break;
         case 113:
             exit(0);
             break;
@@ -608,42 +638,65 @@ static void motion(int x, int y)
     }
 }
 
+void Animate(void)
+{
+    if (running)
+    {
+        if (runningAngle > 5)
+            flag = -1;
+        if (runningAngle < -5)
+            flag = 1;
+        runningAngle += flag * speed;
+        dist += speed;
+    }
+
+    glutPostRedisplay();
+}
+
 void menuSelect(int value)
 {
     
     switch (value)
     {
-        case 1: moving = GL_TRUE; //start the animation
-            //glutIdleFunc(Animate);
+        case 1: running = GL_TRUE;
+            speed = 2;//start the animation
+            glutIdleFunc(Animate);
             break;
-            
-        case 2: moving = GL_FALSE; //stop the animation
+        case 2:
+            running = GL_TRUE;
+            speed = 5;
+            glutIdleFunc(Animate);
+            break;
+        case 3: running = GL_FALSE;
+            //stop the animation
+            runningAngle = 0;
             glutIdleFunc(NULL);
-            break;
             
-        case 3:
+            break;
+        case 7: running = GL_FALSE;
+            dist = 0;
+            runningAngle = 0;
+            glutPostRedisplay();
+            break;
+        case 6:
             exit(0); //quit application
             break;
     }
 }
 
-void Animate(void)
-{
-    
-    glutPostRedisplay();
-}
 
 void Visible(int state)
 {
     
     if (state == GLUT_VISIBLE)
     {
-        if (moving) glutIdleFunc(Animate); //if visible and moving then animate it
+        if (running) glutIdleFunc(Animate); //if visible and moving then animate it
     }
     
     else
     {
-        if (moving) glutIdleFunc(NULL); //if invisible and moving then stop animation
+        if (running) glutIdleFunc(NULL);
+        cout << "Minion Stopped!" << '\n';//if invisible and moving then stop animation
         
     }
 }
@@ -662,12 +715,17 @@ int main(int argc, char **argv)
     glutMotionFunc(motion);
     glutKeyboardFunc(keyboard);
     glutSpecialFunc(specialKeys);
-    glutIdleFunc(Animate);
+    //glutIdleFunc(Animate);
     glutVisibilityFunc(Visible);
     glutCreateMenu(menuSelect);
-    glutAddMenuEntry("Marathon Man", 1); //start animation
-    glutAddMenuEntry("Take a breather", 2); //stop animation
-    glutAddMenuEntry("Quit", 3); //quit
+    glutIdleFunc(Animate);
+    glutAddMenuEntry("walk", 1); //start animation
+    glutAddMenuEntry("run", 2); //stop animation
+    glutAddMenuEntry("stop", 3);
+    glutAddMenuEntry("slow wave", 4);
+    glutAddMenuEntry("fast wave", 5);
+    glutAddMenuEntry("Quit", 6); //quit
+    glutAddMenuEntry("reset", 7);
     glutAttachMenu(GLUT_RIGHT_BUTTON);
     init();
     
