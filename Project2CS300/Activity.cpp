@@ -24,6 +24,10 @@ GLUquadricObj *obj;         // Pointer for quadric objects.
 // Rotation of the whole object
 static GLfloat rotate_x = 0.0, rotate_y = 0.0, rotate_z = 0.0;
 
+// Rotation for arms
+static GLfloat armVert = 0.0, strechX = 0.0, strechY = 0.0;
+bool maxWave = false, handUp = false;
+
 // Mouse function related variables
 static int moving = 0, startx, starty;
 
@@ -44,7 +48,7 @@ void init(void)
     gluLookAt(0.0, 0.0, 350.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-    GLfloat black[] = { 0.0, 0.0, 0.0, 1.0 };
+    GLfloat gray[] = { 0.4, 0.4, 0.4, 1.0 };
     GLfloat cyan[] = { 0.0, 1.0, 1.0, 1.0 };
     GLfloat white[] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat direction[] = {1.0, 1.0, 1.0, 0.0};
@@ -53,7 +57,7 @@ void init(void)
     glMaterialfv(GL_FRONT, GL_SPECULAR, white);
     glMaterialf(GL_FRONT, GL_SHININESS, 100);
     
-    glLightfv(GL_LIGHT0, GL_AMBIENT, black);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, gray);
     glLightfv(GL_LIGHT0, GL_SPECULAR, white);
     glLightfv(GL_LIGHT0, GL_POSITION, direction);
     
