@@ -202,6 +202,7 @@ void minionFeet()
     glPushMatrix();
     glTranslatef(-3.0, -16.0, 0.0);
     glColor3f(0.0,0.0,0.61);
+    
     glRotatef(90, 1.0, 0.0, 0.0);
     gluCylinder(obj, 3, 2, 6, 30, 30);
     glPopMatrix();
@@ -221,6 +222,14 @@ void minionFeet()
     drawShoeTip();
     drawShoeBody(3, 2);
     glPopMatrix();
+    
+    glPushMatrix();
+    glColor3f(1.0, 1.0, 1.0);
+    glTranslatef(3, -23.3, 0.0);
+    //drawCuboid(3, 2, 3);
+    glTranslatef(0, -1, 1.5);
+    drawShoeTip();
+    drawShoeBody(3, 2);
     glPopMatrix();
     
     
@@ -432,16 +441,23 @@ void minionBody()
     glPopMatrix();
 }
 
-void minionArm(bool isLeft)
+void minionArm(bool isLeft, bool handUp)
 {
     glColor3f(0.9,0.5,0.0);
-    obj = gluNewQuadric();
     //cylinder: @para: base radius/top radius/height/slices/stacks
     GLfloat radi = 1.5, fingerRadi = 0.7;
     
     int sign = isLeft ? 1 : -1; // left/right parameters offset
     
     // upper arm
+    glPushMatrix();
+    if (handUp)
+    {
+        glRotatef(-180, 1.0, 0.0, 0.0);
+        glTranslatef(strechX, strechY, 0.0);
+        glRotatef(armVert, 0.0, 0.0, 1.0);
+    }
+    
     glPushMatrix();
     glRotatef(sign * -25, 0.0, 0.0, 1.0);
     glRotatef(-90, 1.0, 0.0, 0.0);
@@ -500,6 +516,8 @@ void minionArm(bool isLeft)
     gluCylinder(obj, fingerRadi, fingerRadi, 1.4, 30, 5);
     gluSphere(obj, fingerRadi, 30, 30);
     glPopMatrix();
+    
+    glPopMatrix();
 }
 
 void display(void)
@@ -508,33 +526,33 @@ void display(void)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glClearColor(0.6, 0.6, 0.6, 0.6);
-    
+    obj = gluNewQuadric();
     //    glMatrixMode( GL_MODELVIEW );
     //    glLoadIdentity();
     glRotatef(rotate_x, 1.0, 0.0, 0.0 );
     glRotatef(rotate_y, 0.0, 1.0, 0.0);
     glRotatef(rotate_z, 0.0, 0.0, 1.0);
     
-    
-    glTranslatef(0.0, 0.0, dist);
-    glScaled(2,2,2);
-    obj = gluNewQuadric(); //creates a new quadric object
-
+    glScalef(2, 2, 2);
     //glColor3f(0.9,0.5,0.0);
     minionBody();
-    
     minionFeet();
-    //minionHair();
     
     // left arm
     glPushMatrix();
-    glTranslatef(-7.8, -11.0, 0.0);
-    minionArm(true);
+    if (handUp)
+    {
+        glTranslatef(-8.0, -7.0, 0.0);
+    }
+    else
+        glTranslatef(-7.8, -11.0, 0.0);
+    minionArm(true, handUp);
     glPopMatrix();
+    
     // right arm
     glPushMatrix();
     glTranslatef(7.8, -11.0, 0.0);
-    minionArm(false);
+    minionArm(false, false);
     glPopMatrix();
     
     glutSwapBuffers();
@@ -582,6 +600,9 @@ void keyboard(unsigned char key, int x, int y)
                 rotate_y += 10.0;
             else
                 rotate_y -= 10.0;
+            break;
+        case 'y':
+            handUp = !handUp;
             break;
         case 'z':
             rotate_z += 5;
